@@ -12,8 +12,8 @@ var factory = new ConnectionFactory
 };
 var connection = factory.CreateConnection();
 var channel = connection.CreateModel();
-channel.ExchangeDeclare(exchange: "chat.exchange", type: ExchangeType.Direct);
-channel.QueueDeclare(queue: "chat_queue", durable: true, autoDelete: false);
+channel.ExchangeDeclare(exchange: "chat.exchange", type: ExchangeType.Direct, durable: true);
+channel.QueueDeclare(queue: "chat_queue", durable: true, autoDelete: false, exclusive: false);
 
 var consumer = new EventingBasicConsumer(channel);
 consumer.Received += (ch, ea) =>
@@ -23,5 +23,5 @@ consumer.Received += (ch, ea) =>
     Console.WriteLine(result);
     channel.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);
 };
-channel.BasicConsume(queue: "chat_queue", autoAck: false, exclusive: false, consumer: consumer);
+channel.BasicConsume(queue: "", autoAck: false, exclusive: false, consumer: consumer);
 Console.ReadLine();
